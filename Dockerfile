@@ -1,8 +1,8 @@
 FROM richarvey/nginx-php-fpm:3.1.2
 
-# Install system dependencies and PHP extensions for Laravel, PostgreSQL, and Composer
-RUN apk add --no-cache \
-    postgresql-dev \
+# Update package index and install system dependencies for PHP extensions
+RUN apk update && apk add --no-cache \
+    libpq-dev \
     libzip-dev \
     libxml2-dev \
     curl-dev \
@@ -12,7 +12,7 @@ RUN apk add --no-cache \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_pgsql pgsql mbstring bcmath xml zip curl gd exif pcntl
 
-# Install Composer (use stable version)
+# Install Composer (stable version)
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version=2.2.21
 
 WORKDIR /var/www/html
