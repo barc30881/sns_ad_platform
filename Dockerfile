@@ -1,4 +1,4 @@
-FROM richarvey/nginx-php-fpm:1.7.2
+FROM richarvey/nginx-php-fpm:3.1.2
 
 # Install system dependencies and PHP extensions for Laravel, PostgreSQL, and Composer
 RUN apk add --no-cache \
@@ -9,12 +9,10 @@ RUN apk add --no-cache \
     libpng-dev \
     libjpeg-turbo-dev \
     freetype-dev \
-    libpng-dev \
-    libjpeg-turbo-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_pgsql pgsql mbstring bcmath xml zip curl gd exif pcntl
 
-# Install Composer (use stable version to avoid conflicts)
+# Install Composer (use stable version)
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version=2.2.21
 
 WORKDIR /var/www/html
