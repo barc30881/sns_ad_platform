@@ -1,12 +1,18 @@
 FROM richarvey/nginx-php-fpm:1.7.2
 
-COPY . /var/www/html
+# Install PHP extensions required for Laravel, PostgreSQL, and payment packages
+RUN apk add --no-cache postgresql-dev libzip-dev libxml2-dev curl-dev \
+    && docker-php-ext-install pdo_pgsql pgsql mbstring bcmath xml zip curl
 
-RUN composer install --optimize-autoloader --no-dev --working-dir=/var/www/html
+WORKDIR /var/www/html
 
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+COPY . .
 
-RUN cd /var/www/html && php artisan key:generate && php artisan config:cache && php artisan route:cache && php artisan view:cache
+RUN composer install --optimize-autoloader --no-dev
+
+RUN chown -R www-data:www-data storage bootstrap/cache
+
+RUN php artisan config:cache && php artisan route:cache && php artisan view:cache
 
 EXPOSE 80
 
